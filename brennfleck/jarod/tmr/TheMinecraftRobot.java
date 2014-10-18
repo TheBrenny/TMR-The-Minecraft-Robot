@@ -16,6 +16,12 @@ import brennfleck.jarod.tmr.utils.TmrInputProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 
+/**
+ * Not a good idea to access this from a script... Just sayin'. None of this
+ * will have a JavaDoc.
+ * 
+ * @author Jarod Brennfleck
+ */
 public class TheMinecraftRobot {
 	public static final String TMR_VERSION = "0.3";
 	public static final String TMR_TITLE = "The Minecraft Robot";
@@ -35,7 +41,7 @@ public class TheMinecraftRobot {
 	
 	public void handleScriptCommand(String command) {
 		if(getScript() != null) {
-			if(getScript().handleCommand(command) != 0) MinecraftForm.sendMessageToLocalChatBox(MinecraftForm.Color.DARK_RED.colorCode() + "Bad command!");
+			if(getScript().handleCommand(command) != 0) MinecraftForm.sendMessageToLocalChatBox(MinecraftForm.Format.DARK_RED.formatCode() + "Bad command!");
 		} else {
 			MinecraftForm.sendMessageToLocalChatBox("TMR: You can't access a script command without first running a script!");
 		}

@@ -2,6 +2,7 @@ package brennfleck.jarod.tmr.scripts.examples;
 
 import brennfleck.jarod.tmr.scripts.Script;
 import brennfleck.jarod.tmr.scripts.ScriptManifest;
+import brennfleck.jarod.tmr.scripts.ScriptManifest.Category;
 import brennfleck.jarod.tmr.scripts.minecraft.MinecraftForm;
 import brennfleck.jarod.tmr.scripts.player.Inventory;
 import brennfleck.jarod.tmr.scripts.player.Item;
@@ -12,7 +13,7 @@ import brennfleck.jarod.tmr.scripts.world.Location;
 import brennfleck.jarod.tmr.scripts.world.World;
 import brennfleck.jarod.tmr.utils.TmrInputProxy;
 
-@ScriptManifest(name = "Auto Quary", version = "0.1", author = "Jarod Brennfleck", category = "Mining")
+@ScriptManifest(name = "Auto Quary", version = "0.1", author = "Jarod Brennfleck", category = Category.MINING)
 public class AutoQuary extends Script {
 	public boolean[][][] blocks;
 	public Location startPosition;
@@ -59,11 +60,11 @@ public class AutoQuary extends Script {
 		if(firstRun) firstRun();
 		int[] pt;
 		if(shovel && (Inventory.getItemAt(0, 0) == null || Inventory.getItemAt(0, 0).getItemType() != Item.ItemType.SHOVEL)) {
-			pt = Inventory.getFirstOccurencePoint(Item.ItemType.SHOVEL);
+			pt = Inventory.getFirstOccurrencePoint(Item.ItemType.SHOVEL);
 			Inventory.swapItemsAt(0, 0, pt[0], pt[1]);
 		}
 		if(pick && (Inventory.getItemAt(1, 0) == null || Inventory.getItemAt(1, 0).getItemType() != Item.ItemType.PICKAXE)) {
-			pt = Inventory.getFirstOccurencePoint(Item.ItemType.PICKAXE);
+			pt = Inventory.getFirstOccurrencePoint(Item.ItemType.PICKAXE);
 			Inventory.swapItemsAt(1, 0, pt[0], pt[1]);
 		}
 		int[] nextBlock = getNextBlock();
@@ -99,8 +100,8 @@ public class AutoQuary extends Script {
 			} else {
 				askedReady = true;
 				MinecraftForm.sendMessageToLocalChatBox("Requirments not fully met:");
-				MinecraftForm.sendMessageToLocalChatBox("- Pickaxe: " + MinecraftForm.Color.codeTag() + (pick ? MinecraftForm.Color.DARK_GREEN.getID() + "found" : MinecraftForm.Color.DARK_RED.getID() + "not found"));
-				MinecraftForm.sendMessageToLocalChatBox("- Shovel:  " + MinecraftForm.Color.codeTag() + (shovel ? MinecraftForm.Color.DARK_GREEN.getID() + "found" : MinecraftForm.Color.DARK_RED.getID() + "not found"));
+				MinecraftForm.sendMessageToLocalChatBox("- Pickaxe: " + MinecraftForm.Format.formatTag + (pick ? MinecraftForm.Format.DARK_GREEN.getID() + "found" : MinecraftForm.Format.DARK_RED.getID() + "not found"));
+				MinecraftForm.sendMessageToLocalChatBox("- Shovel:  " + MinecraftForm.Format.formatTag + (shovel ? MinecraftForm.Format.DARK_GREEN.getID() + "found" : MinecraftForm.Format.DARK_RED.getID() + "not found"));
 				MinecraftForm.sendMessageToLocalChatBox("Enter the ready command to start anyway.");
 				return 0;
 			}

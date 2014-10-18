@@ -8,23 +8,42 @@ import brennfleck.jarod.tmr.scripts.ScriptManifest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 
+/**
+ * This class controls everything that has anything to do with the Minecraft
+ * window or Minecraft itself.
+ * 
+ * @author Jarod Brennfleck
+ */
 public class MinecraftForm {
 	private static Minecraft getMinecraft() {
 		return Minecraft.getMinecraft();
 	}
 	
+	/**
+	 * Grabs the mouse and hides it.
+	 */
 	public static void grabMouse() {
 		if(getMinecraft().currentScreen == null) getMinecraft().mouseHelper.grabMouseCursor();
 	}
 	
+	/**
+	 * Ungrabs the mouse and shows it.
+	 */
 	public static void ungrabMouse() {
 		getMinecraft().mouseHelper.ungrabMouseCursor();
 	}
 	
+	/**
+	 * Checks whether or not the mouse has been grabbed.
+	 */
 	public static boolean isMouseGrabbed() {
 		return Mouse.isGrabbed();
 	}
 	
+	/**
+	 * Sends a message to the chat box, but only for the local user; nothing is
+	 * sent to the server.
+	 */
 	public static void sendMessageToLocalChatBox(String message) {
 		if(Minecraft.getTMR().getScript() != null) {
 			String prepend = Minecraft.getTMR().getScript().getManifest().name() + ": ";
@@ -33,7 +52,12 @@ public class MinecraftForm {
 		TheMinecraftRobot.sendMessageToLocalChatBox(message);
 	}
 	
-	public enum Color {
+	/**
+	 * Holds data for writing colorful things to the chatbox.
+	 * 
+	 * @author Jarod Brennfleck
+	 */
+	public enum Format {
 		BLACK("0"),
 		DARK_BLUE("1"),
 		DARK_GREEN("2"),
@@ -49,27 +73,7 @@ public class MinecraftForm {
 		RED("c"),
 		LIGHT_PURPLE("d"),
 		YELLOW("e"),
-		WHITE("f");
-		private String id;
-		
-		Color(String id) {
-			this.id = id;
-		}
-		
-		public String colorCode() {
-			return ((char) 167) + id;
-		}
-		
-		public String getID() {
-			return id;
-		}
-		
-		public static String codeTag() {
-			return ((char) 167) + "";
-		}
-	}
-	
-	public enum Format {
+		WHITE("f"),
 		OBFUSCATED("k"),
 		BOLD("l"),
 		STRIKE_THROUGH("m"),
@@ -77,22 +81,29 @@ public class MinecraftForm {
 		ITALIC("o"),
 		RESET("r"),
 		EXTRA_LINE("\n");
-		private String code;
+		/**
+		 * Returns the tag used to process text manipulation.
+		 */
+		public static String formatTag = ((char) 167) + "";
+		private String id;
 		
-		Format(String code) {
-			this.code = code;
+		Format(String id) {
+			this.id = id;
 		}
 		
+		/**
+		 * Returns the full format code, including the {@link #formatTag()
+		 * format tag}.
+		 */
 		public String formatCode() {
-			return ((char) 167) + code;
+			return ((char) 167) + id;
 		}
 		
-		public String getCode() {
-			return code;
-		}
-		
-		public static String codeTag() {
-			return ((char) 167) + "";
+		/**
+		 * Returns the format ID used in the format code.
+		 */
+		public String getID() {
+			return id;
 		}
 	}
 }

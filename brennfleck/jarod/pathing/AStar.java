@@ -16,8 +16,15 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 /**
- * <p>Original by Adamki11s. (<a href="https://forums.bukkit.org/threads/lib-a-pathfinding-algorithm.129786/">Unmodified Library</a>)</p>
- * <p>Modified slightly by Jarod Brennfleck to accommodate for the TMR Player Walking.</p>
+ * <p>
+ * Original by Adamki11s. (<a href=
+ * "https://forums.bukkit.org/threads/lib-a-pathfinding-algorithm.129786/"
+ * >Unmodified Library</a>)
+ * </p>
+ * <p>
+ * Modified slightly by Jarod Brennfleck to accommodate for the TMR Player
+ * Walking.
+ * </p>
  */
 public class AStar {
 	public static int DEFUALT_RANGE = 70;
@@ -56,17 +63,14 @@ public class AStar {
 		this.ey = (int) end.getY();
 		this.ez = (int) end.getZ();
 		this.range = range;
-		
 		// check if theres a problem
 		boolean s = true, e = true;
 		int[] maxR = BrennyHelpful.MathHelpful.maxAndIndex_int(abs(sx - ex), abs(sy - ey), abs(sz - ez));
 		boolean r = maxR[0] > range;
 		String maxRD = "XYZ".charAt(maxR[1]) + "";
-		
 		if(!(s = this.isLocationWalkable(start)) || !(e = this.isLocationWalkable(end)) || r) {
 			throw new InvalidPathException(s, e, range, maxR[0], maxRD);
 		}
-		
 		// if no problem, continue on and finish the rest of the init
 		short sh = 0;
 		Tile t = new Tile(sh, sh, sh, null);
@@ -93,14 +97,15 @@ public class AStar {
 	}
 	
 	public ArrayList<Tile> iterate() {
-//		if(!checkOnce) {
-//			// invert the boolean flag
-//			checkOnce ^= true;
-//			if((abs(sx - ex) > range) || (abs(sy - ey) > range) || (abs(sz - ez) > range)) {
-//				this.result = PathingResult.NO_PATH;
-//				return null;// jump out
-//			}
-//		}
+		// if(!checkOnce) {
+		// // invert the boolean flag
+		// checkOnce ^= true;
+		// if((abs(sx - ex) > range) || (abs(sy - ey) > range) || (abs(sz - ez)
+		// > range)) {
+		// this.result = PathingResult.NO_PATH;
+		// return null;// jump out
+		// }
+		// }
 		// while not at end
 		Tile current = null;
 		while(canContinue()) {
@@ -290,6 +295,7 @@ public class AStar {
 			}
 			return sb.toString();
 		}
+		
 		public String getMessage() {
 			return getErrorReason();
 		}

@@ -2,29 +2,56 @@ package brennfleck.jarod.helpfulthings;
 
 import java.awt.geom.Point2D;
 
+/**
+ * A class that stores data for a point.
+ * 
+ * @author Jarod Brennfleck
+ */
 public class BrennyPoint extends Point2D.Double {
-	private static final long serialVersionUID = 1L;
-	
+	/**
+	 * Constructs a point at 0,0.
+	 */
 	public BrennyPoint() {
 		super(0, 0);
 	}
 	
+	/**
+	 * Constructs a point at x,y
+	 */
 	public BrennyPoint(double x, double y) {
 		super(x, y);
 	}
-	public BrennyPoint(BrennyPoint point) {
-		super(point.x, point.y);
-	}
+	
+	/**
+	 * Sets this locations x-coordinate.
+	 */
 	public void setLocationX(double x) {
 		this.x = x;
 	}
+	
+	/**
+	 * Sets this locations y-coordinate.
+	 */
 	public void setLocationY(double y) {
 		this.y = y;
 	}
+	
+	/**
+	 * Makes a rectangle using the range with this point being the midpoint.
+	 * 
+	 * @see {@link #makeRectangle(double, double)}
+	 */
 	public BrennyRectangle makeRectangle(double range) {
-		return new BrennyRectangle(this.x - range, this.y - range, range * 2, range * 2);
+		return makeRectangle(range, range);
 	}
-	public boolean isContainedBy(double x, double y, double width, double height) {
-		return new BrennyRectangle(x, y, width, height).contains(this);
+	
+	/**
+	 * Makes a rectangle using the width and height with this point being the
+	 * midpoint.
+	 * 
+	 * @see {@link #makeRectangle(double, double)}
+	 */
+	public BrennyRectangle makeRectangle(double width, double height) {
+		return new BrennyRectangle(this.x - width, this.y - height, width * 2, height * 2);
 	}
 }

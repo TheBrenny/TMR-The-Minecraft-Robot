@@ -7,12 +7,13 @@ import brennfleck.jarod.helpfulthings.BrennyHelpful;
 import brennfleck.jarod.pathing.AStar;
 import brennfleck.jarod.tmr.scripts.Script;
 import brennfleck.jarod.tmr.scripts.ScriptManifest;
+import brennfleck.jarod.tmr.scripts.ScriptManifest.Category;
 import brennfleck.jarod.tmr.scripts.minecraft.MinecraftForm;
 import brennfleck.jarod.tmr.scripts.player.Player;
 import brennfleck.jarod.tmr.scripts.world.Location;
 
 
-@ScriptManifest(name = "Maze Runner", version = "0.1", author = "Jarod Brennfleck", category = "Walking")
+@ScriptManifest(name = "Maze Runner", version = "0.1", author = "Jarod Brennfleck", category = Category.WALKING)
 public class MazeRunner extends Script {
 	public ArrayList<Location> currentPath;
 	public int maxSteps;

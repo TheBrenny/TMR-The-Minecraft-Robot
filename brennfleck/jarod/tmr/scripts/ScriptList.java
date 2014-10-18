@@ -36,7 +36,7 @@ public class ScriptList {
 	}
 	public static String[] getScriptManifest(int index) {
 		ScriptManifest sm = scriptList.get(index).getAnnotation(ScriptManifest.class);
-		return new String[] {sm.name(), sm.author(), sm.version(), sm.category()};
+		return new String[] {sm.name(), sm.author(), sm.version(), sm.category().getName()};
 	}
 	public static Script getInstantiatedScript(int index) {
 		try {

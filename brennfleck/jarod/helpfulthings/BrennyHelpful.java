@@ -4,25 +4,33 @@ import java.util.Random;
 
 import net.minecraft.util.MathHelper;
 
+/**
+ * A collection of helpful methods and functions.s
+ * 
+ * @author Jarod Brennfleck
+ */
 public class BrennyHelpful {
-	public static double math_sin(double angle) {
-		return Math.sin(Math.toRadians(angle));
-	}
-	
-	public static double math_cos(double angle) {
-		return Math.cos(Math.toRadians(angle));
-	}
-	
+	/**
+	 * Returns an angle according to the opposite and adjacent sides of the
+	 * angle.
+	 */
 	public static double getAngle(double opp, double adj) {
 		return (double) Math.toDegrees(Math.atan2(opp, adj)) - 90.0D;
 	}
 	
+	/**
+	 * Returns the <code>number</code> raised to the power of the
+	 * <code>exponent</code>.
+	 */
 	public static double powerOf(double number, int exponent) {
 		for(int i = 1; i <= exponent; i++)
 			number *= i;
 		return number;
 	}
 	
+	/**
+	 * Returns a percentage.
+	 */
 	public static float getPercentage(float amount, float max) {
 		return (amount / max) * 100.0F;
 	}
@@ -111,12 +119,13 @@ public class BrennyHelpful {
 		}
 		
 		/**
-		 * Rounds up the passed int decimal number. 
+		 * Rounds up the passed int decimal number.
 		 */
 		public static int ceiling_float_int(float num) {
 			int var1 = (int) num;
 			return num > (float) var1 ? var1 + 1 : var1;
 		}
+		
 		/**
 		 * @see {@link #ceiling_float_int(float)}
 		 */
@@ -203,7 +212,7 @@ public class BrennyHelpful {
 		/**
 		 * Returns the average from a collection of <code>long</code> values.
 		 */
-		public static double average(long ... collection) {
+		public static double average(long... collection) {
 			long var1 = 0L;
 			for(long l : collection)
 				var1 += l;

@@ -3,11 +3,12 @@ package brennfleck.jarod.tmr.scripts.examples;
 import brennfleck.jarod.tmr.scripts.Script;
 import brennfleck.jarod.tmr.scripts.ScriptManifest;
 import brennfleck.jarod.tmr.scripts.Script.ScriptGui;
+import brennfleck.jarod.tmr.scripts.ScriptManifest.Category;
 import brennfleck.jarod.tmr.scripts.player.Player;
 import brennfleck.jarod.tmr.scripts.world.World;
 import net.minecraft.client.Minecraft;
 
-@ScriptManifest(name = "Auto Walker", author = "Jarod Brennfleck", version = "0.3", category = "Walking")
+@ScriptManifest(name = "Auto Walker", author = "Jarod Brennfleck", version = "0.3", category = Category.WALKING)
 public class AutoWalker extends Script {
 	public boolean onStart() {
 		new Gui();

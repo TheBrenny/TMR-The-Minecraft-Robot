@@ -1,10 +1,18 @@
-/*
- * By @Adamki11s
- */
 package brennfleck.jarod.pathing;
 
 import brennfleck.jarod.tmr.scripts.world.Location;
 
+/**
+ * <p>
+ * Original by Adamki11s. (<a href=
+ * "https://forums.bukkit.org/threads/lib-a-pathfinding-algorithm.129786/"
+ * >Unmodified Library</a>)
+ * </p>
+ * <p>
+ * Modified slightly by Jarod Brennfleck to accommodate for the TMR Player
+ * Walking.
+ * </p>
+ */
 public class Tile {
 	// as offset from starting point
 	private final short x, y, z;
@@ -63,7 +71,6 @@ public class Tile {
 	public int getZ(Location i) {
 		return (int) (i.getZ() + z);
 	}
-	
 	
 	public String getUID() {
 		return this.uid;

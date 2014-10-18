@@ -15,35 +15,65 @@ public class Item {
 		this.displayName = is.getDisplayName();
 		this.id = net.minecraft.item.Item.getIdFromItem(is.getItem());
 		this.stackCount = is.stackSize;
-		this.itemType = ItemType.getItemType(is);
+		this.itemType = ItemType.getItemType(this);
 	}
+	
+	/**
+	 * Constructs an Item by the id.
+	 */
 	public Item(int id) {
 		this(id, 1, 0);
 	}
+	
+	/**
+	 * Constructs an Item by the id and stack count.
+	 */
 	public Item(int id, int stackCount) {
 		this(id, stackCount, 0);
 	}
+	
+	/**
+	 * Constructs an Item by the id, stack count, and damage amount.
+	 */
 	public Item(int id, int stackCount, int damageAmount) {
 		this(new ItemStack(net.minecraft.item.Item.getItemById(id), stackCount, damageAmount));
 	}
 	
+	/**
+	 * Returns the display name if the parameter is true, or the unlocal name if
+	 * the parameter is false.
+	 */
 	public String getName(boolean displayName) {
 		if(displayName) return this.displayName;
 		return this.unlocalName;
 	}
 	
+	/**
+	 * Returns the item id.
+	 */
 	public int getID() {
 		return this.id;
 	}
 	
+	/**
+	 * Returns the stack count.
+	 */
 	public int getStackCount() {
 		return this.stackCount;
 	}
 	
+	/**
+	 * Returns the {@link ItemType#ItemType ItemType}.
+	 */
 	public ItemType getItemType() {
 		return this.itemType;
 	}
 	
+	/**
+	 * Determines the item type of an item.
+	 * 
+	 * @author Jarod Brennfleck
+	 */
 	public enum ItemType {
 		SHOVEL,
 		HOE,
@@ -54,17 +84,21 @@ public class Item {
 		FOOD,
 		OTHER;
 		
-		public boolean isAnyOf(ItemType ... types) {
-			for(ItemType a : types) {
-				for(ItemType b : ItemType.values()) {
-					if(a == b) return true;
-				}
-			}
+		/**
+		 * Finds out whether this item type is in the list of item types passed.
+		 */
+		public boolean isAnyOf(ItemType... its) {
+			for(ItemType it : its)
+				if(it == this) return true;
 			return false;
 		}
 		
-		public static ItemType getItemType(ItemStack is) {
-			String name = is.getUnlocalizedName().toLowerCase();
+		/**
+		 * Determines the {@link #ItemType} based off the name of the unlocal
+		 * item name.
+		 */
+		public static ItemType getItemType(Item i) {
+			String name = i.getName(false).toLowerCase();
 			if(name.contains("shovel")) return ItemType.SHOVEL;
 			if(name.contains("hoe")) return ItemType.HOE;
 			if(name.contains("pickaxe")) return ItemType.PICKAXE;
