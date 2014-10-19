@@ -1,4 +1,4 @@
-package brennfleck.jarod.tmr.scripts.player;
+package brennfleck.jarod.tmr.scripts.entities;
 
 import net.minecraft.item.ItemStack;
 

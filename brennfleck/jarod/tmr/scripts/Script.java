@@ -3,7 +3,8 @@ package brennfleck.jarod.tmr.scripts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import brennfleck.jarod.tmr.TheMinecraftRobot;
-import brennfleck.jarod.tmr.scripts.player.Player;
+import brennfleck.jarod.tmr.scripts.entities.TemporaryPlayerNameTakeover;
+import brennfleck.jarod.tmr.scripts.events.EventObservable;
 import brennfleck.jarod.tmr.scripts.world.World;
 import brennfleck.jarod.tmr.utils.TmrInputProxy;
 
@@ -13,6 +14,7 @@ import brennfleck.jarod.tmr.utils.TmrInputProxy;
  * @author Jarod Brennfleck
  */
 public abstract class Script {
+	private static EventObservable eventObservable;
 	protected boolean isOkayToUngrabMouse = false;
 	private Thread thread;
 	private boolean running = false;
@@ -80,6 +82,7 @@ public abstract class Script {
 	 */
 	public final void start() {
 		if(Minecraft.getTMR().getScript() != null) return;
+		if(eventObservable == null) eventObservable = new EventObservable();
 		System.out.println("Starting script: " + getManifest().name());
 		TheMinecraftRobot.sendMessageToLocalChatBox("Starting script: " + getManifest().name());
 		running = onStart();
@@ -103,10 +106,12 @@ public abstract class Script {
 		System.out.println("Stopping script: " + getManifest().name());
 		TheMinecraftRobot.sendMessageToLocalChatBox("Stopping script: " + getManifest().name());
 		onStop();
-		Player.resetAttributes();
+		TemporaryPlayerNameTakeover.resetAttributes();
 		running = false;
 		paused = false;
 		if(Minecraft.getMinecraft().currentScreen == null) TmrInputProxy.setMouseGrabbed(true);
+		eventObservable.deleteListeners();
+		Minecraft.getTMR().addDefaultListeners(eventObservable);
 		Minecraft.getTMR().setActiveScript(null);
 	}
 	
@@ -164,6 +169,6 @@ public abstract class Script {
 	 * Returns whether or not we are valid and ready for script execution.
 	 */
 	public static final boolean isValid() {
-		return Player.isValid() && World.isValid();
+		return TemporaryPlayerNameTakeover.isValid() && World.isValid();
 	}
 }

@@ -1,8 +1,8 @@
 package brennfleck.jarod.tmr.scripts.world;
 
 import brennfleck.jarod.pathing.AStar;
-import brennfleck.jarod.tmr.scripts.player.Item;
-import brennfleck.jarod.tmr.scripts.player.Item.ItemType;
+import brennfleck.jarod.tmr.scripts.entities.Item;
+import brennfleck.jarod.tmr.scripts.entities.Item.ItemType;
 
 import net.minecraft.block.Block.SoundType;
 import net.minecraft.block.material.Material;

@@ -3,11 +3,11 @@ package brennfleck.jarod.tmr.scripts.examples;
 import brennfleck.jarod.tmr.scripts.Script;
 import brennfleck.jarod.tmr.scripts.ScriptManifest;
 import brennfleck.jarod.tmr.scripts.ScriptManifest.Category;
+import brennfleck.jarod.tmr.scripts.entities.Inventory;
+import brennfleck.jarod.tmr.scripts.entities.Item;
+import brennfleck.jarod.tmr.scripts.entities.TemporaryPlayerNameTakeover;
+import brennfleck.jarod.tmr.scripts.entities.Item.ItemType;
 import brennfleck.jarod.tmr.scripts.minecraft.MinecraftForm;
-import brennfleck.jarod.tmr.scripts.player.Inventory;
-import brennfleck.jarod.tmr.scripts.player.Item;
-import brennfleck.jarod.tmr.scripts.player.Player;
-import brennfleck.jarod.tmr.scripts.player.Item.ItemType;
 import brennfleck.jarod.tmr.scripts.world.Block;
 import brennfleck.jarod.tmr.scripts.world.Location;
 import brennfleck.jarod.tmr.scripts.world.World;
@@ -39,7 +39,7 @@ public class AutoQuary extends Script {
 			for(boolean[] width : depth)
 				for(int i = 0; i < width.length; i++)
 					width[i] = false;
-		startPosition = Player.getLocation("").shift(0, -1, 0).getNonPrecise();
+		startPosition = TemporaryPlayerNameTakeover.getLocation("").shift(0, -1, 0).getNonPrecise();
 	}
 	
 	public int[] getNextBlock() {

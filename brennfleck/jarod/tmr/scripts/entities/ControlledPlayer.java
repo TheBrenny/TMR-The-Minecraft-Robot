@@ -1,76 +1,64 @@
-package brennfleck.jarod.tmr.scripts.player;
+package brennfleck.jarod.tmr.scripts.entities;
 
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.TmrMovementInputFromOptions;
 import brennfleck.jarod.helpfulthings.BrennyAngle;
 import brennfleck.jarod.helpfulthings.BrennyHelpful;
 import brennfleck.jarod.helpfulthings.BrennyPoint;
 import brennfleck.jarod.pathing.AStar;
+import brennfleck.jarod.pathing.AStar.InvalidPathException;
 import brennfleck.jarod.pathing.PathingResult;
 import brennfleck.jarod.pathing.Tile;
-import brennfleck.jarod.pathing.AStar.InvalidPathException;
+import brennfleck.jarod.tmr.TheMinecraftRobot;
 import brennfleck.jarod.tmr.scripts.minecraft.MinecraftForm;
 import brennfleck.jarod.tmr.scripts.world.Area;
 import brennfleck.jarod.tmr.scripts.world.Block;
 import brennfleck.jarod.tmr.scripts.world.Location;
 import brennfleck.jarod.tmr.scripts.world.PreciseLocation;
 import brennfleck.jarod.tmr.scripts.world.World;
-import net.minecraft.util.TmrMovementInputFromOptions;
 
-/**
- * A class for interacting with the player.
- * 
- * @author Jarod Brennfleck
- */
-public class Player {
-	private static Location pathStartLocation;
-	private static ArrayList<Location> currentPath;
-	private static ArrayList<PreciseLocation> abovePath;
-	private static long lastTimeAskedForPath = -1L;
-	private static boolean isSwingingItem = false;
-	private static boolean isInteracting = false;
-	private static boolean isUsingItem = false;
+public class ControlledPlayer extends EntityPlayerBase {
+	private static ControlledPlayer theActualPlayer;
 	public static final int FORWARD = 100;
 	public static final int BACKWARD = 101;
 	public static final int LEFT = 102;
 	public static final int RIGHT = 103;
-	public static final int SOUTH = 200;
-	public static final int WEST = 201;
-	public static final int NORTH = 202;
-	public static final int EAST = 203;
-	public static final String EYE = "eye";
-	public static final String FEET = "feet";
+	private Location pathStartLocation;
+	private ArrayList<Location> currentPath;
+	private ArrayList<PreciseLocation> abovePath;
+	private long lastTimeAskedForPath = -1L;
+	private boolean isSwingingItem = false;
+	private boolean isInteracting = false;
+	private boolean isUsingItem = false;
 	
-	private static EntityClientPlayerMP getPlayer() {
-		return Minecraft.getMinecraft().thePlayer;
+	public static ControlledPlayer getPlayer() {
+		return ControlledPlayer.theActualPlayer;
 	}
 	
-	/**
-	 * Checks whether or not we can interact with the player.
-	 */
-	public static final boolean isValid() {
-		boolean valid = true;
-		if(getPlayer() == null) valid = false;
-		if(!valid) System.out.println("Player is bad!");
-		return valid;
+	public ControlledPlayer() {
+		super(Minecraft.getMinecraft().thePlayer);
+		if(TheMinecraftRobot.playerNeedsRemake()) theActualPlayer = this;
+	}
+	
+	private static EntityClientPlayerMP getRealPlayer() {
+		return (EntityClientPlayerMP) theActualPlayer.theRealEntity;
 	}
 	
 	/**
 	 * Returns the current path that has been calculated.
 	 */
-	public static ArrayList<Location> getCurrentPath() {
-		return Player.currentPath;
+	public ArrayList<Location> getCurrentPath() {
+		return currentPath;
 	}
 	
 	/**
 	 * Returns the precise path above the currently calculated path.
 	 */
-	public static ArrayList<PreciseLocation> getCurrentAbovePath() {
-		return Player.abovePath;
+	public ArrayList<PreciseLocation> getCurrentAbovePath() {
+		return abovePath;
 	}
 	
 	/**
@@ -81,7 +69,7 @@ public class Player {
 	 * @see {@link #LEFT}
 	 * @see {@link #RIGHT}
 	 */
-	public static void move(int direction, boolean state) {
+	public void move(int direction, boolean state) {
 		TmrMovementInputFromOptions.Direction dir = TmrMovementInputFromOptions.Direction.NONE;
 		// @formatter:off
 		switch(direction) {
@@ -91,13 +79,13 @@ public class Player {
 		case RIGHT: dir = dir.RIGHT; break;
 		}
 		// @formatter:on
-		((TmrMovementInputFromOptions) getPlayer().movementInput).move(dir, state);
+		((TmrMovementInputFromOptions) getRealPlayer().movementInput).move(dir, state);
 	}
 	
 	/**
 	 * Returns the current status of the given direction.
 	 */
-	public static Object[] getMovementState(int direction) {
+	public Object[] getMovementState(int direction) {
 		TmrMovementInputFromOptions.Direction dir = TmrMovementInputFromOptions.Direction.NONE;
 		// @formatter:off
 		switch(direction) {
@@ -113,61 +101,35 @@ public class Player {
 	/**
 	 * Tells the player to jump once.
 	 */
-	public static void jump() {
-		if(getPlayer().flyToggleTimer == 0) ((TmrMovementInputFromOptions) getPlayer().movementInput).jump();
+	public void jump() {
+		if(getRealPlayer().flyToggleTimer == 0) ((TmrMovementInputFromOptions) getRealPlayer().movementInput).jump();
 	}
 	
 	/**
 	 * Toggles sneaking for the player.
 	 */
-	public static void sneak(boolean toggle) {
-		((TmrMovementInputFromOptions) getPlayer().movementInput).sneak(toggle);
+	public void sneak(boolean toggle) {
+		((TmrMovementInputFromOptions) getRealPlayer().movementInput).sneak(toggle);
 	}
 	
 	/**
 	 * Toggles sprinting for the player.
 	 */
-	public static void sprint(boolean toggle) {
-		getPlayer().setSprinting(toggle);
+	public void sprint(boolean toggle) {
+		getRealPlayer().setSprinting(toggle);
 	}
 	
 	/**
 	 * Sends a chat message on the player's behalf.
 	 */
-	public static void sendChatMessage(String message) {
-		getPlayer().sendChatMessage(message);
-	}
-	
-	/**
-	 * Returns the location of the current player, with the y-coordinate
-	 * depending on the <code>spot</code>, rounded to become a
-	 * {@link brennfleck.jarod.tmr.scripts.world.Location#Location Location}.
-	 * 
-	 * @see {@link #EYE}
-	 * @see {@link #FOOT}
-	 */
-	public static Location getLocation(String spot) {
-		return getPreciseLocation(spot).getNonPrecise();
-	}
-	
-	/**
-	 * Returns the location of the current player, with the y-coordinate
-	 * depending on the <code>spot</code>, as a
-	 * {@link brennfleck.jarod.tmr.scripts.world.PreciseLocation#PreciseLocation
-	 * PreciseLocation}.
-	 * 
-	 * @see {@link #EYE}
-	 * @see {@link #FOOT}
-	 */
-	public static PreciseLocation getPreciseLocation(String spot) {
-		double theY = spot.equalsIgnoreCase(EYE) ? getPlayer().posY : getPlayer().boundingBox.minY;
-		return new PreciseLocation(getPlayer().posX, theY, getPlayer().posZ);
+	public void sendChatMessage(String message) {
+		getRealPlayer().sendChatMessage(message);
 	}
 	
 	/**
 	 * Returns the block currently under the player's feet.
 	 */
-	public static Block getBlockUnderFeet() {
+	public Block getBlockUnderFeet() {
 		return World.getBlockAt(getLocation("").shift(0, -1, 0));
 	}
 	
@@ -176,7 +138,7 @@ public class Player {
 	 * {@link brennfleck.jarod.tmr.scripts.world.Location#Location Location} by
 	 * making a path first.
 	 */
-	public static String[] walkTo(Location location) {
+	public String[] walkTo(Location location) {
 		if((currentPath != null && currentPath.size() == 0) || new Area(location, location.clone().shift(0, 3, 0)).contains(getLocation(EYE))) {
 			move(FORWARD, false);
 			clearPathData();
@@ -202,10 +164,10 @@ public class Player {
 	 * AStar} path and returns the path made, or returns null if no path can be
 	 * made.
 	 */
-	public static AStar makePath(Location l) {
+	public AStar makePath(Location l) {
 		try {
 			l = World.getMostSuitableStandingLocation(l);
-			final Location a = World.getMostSuitableStandingLocation(new Location(getPlayer().posX, getPlayer().posY, getPlayer().posZ));
+			final Location a = World.getMostSuitableStandingLocation(new Location(getRealPlayer().posX, getRealPlayer().posY, getRealPlayer().posZ));
 			AStar path = new AStar(a, l, 100);
 			ArrayList<Tile> thePath = path.iterate();
 			if(path.getPathingResult() == PathingResult.SUCCESS) {
@@ -215,8 +177,8 @@ public class Player {
 					theRealPath.add(t.getLocation(a));
 					abovePath.add(t.getLocation(a).shift(0, 1.0D, 0));
 				}
-				Player.currentPath = theRealPath;
-				Player.pathStartLocation = a;
+				currentPath = theRealPath;
+				pathStartLocation = a;
 				return path;
 			} else {
 				MinecraftForm.sendMessageToLocalChatBox(MinecraftForm.Format.DARK_RED.formatCode() + "TMR: Pathing result was bad... Very bad...");
@@ -236,18 +198,18 @@ public class Player {
 	/**
 	 * Clears all path data that has been previously used.
 	 */
-	public static void clearPathData() {
-		Player.currentPath = null;
-		Player.abovePath = null;
-		Player.pathStartLocation = null;
+	public void clearPathData() {
+		currentPath = null;
+		abovePath = null;
+		pathStartLocation = null;
 	}
 	
-	private static Location walkHelper() {
-		boolean inLiquid = getPlayer().isInWater() || getPlayer().handleLavaMovement();
-		double vectorY = (vec3Helper(Player.pathStartLocation)[1] + 1) - getLocation("").getY();
+	private Location walkHelper() {
+		boolean inLiquid = getRealPlayer().isInWater() || getRealPlayer().handleLavaMovement();
+		double vectorY = (vec3Helper(pathStartLocation)[1] + 1) - getLocation("").getY();
 		boolean shouldJump = vectorY > 0;
 		if(shouldJump || inLiquid) jump();
-		double shift = (double) ((int) (getPlayer().width + 1.0F)) * 0.5D;
+		double shift = (double) ((int) (getRealPlayer().width + 1.0F)) * 0.5D;
 		Location t = currentPath.get(0);
 		faceLocation(new PreciseLocation(t.getX() + shift, t.getY() + 1.0D + shift, t.getZ() + shift));
 		move(FORWARD, true);
@@ -264,16 +226,16 @@ public class Player {
 	 * {@link brennfleck.jarod.tmr.scripts.world.PreciseLocation#PreciseLocation
 	 * PreciseLocation}.
 	 */
-	public static void faceLocation(PreciseLocation location) {
+	public void faceLocation(PreciseLocation location) {
 		double[] vecHelp = vec3Helper(location);
 		double vectorX = vecHelp[0];
 		double vectorY = vecHelp[1];
 		double vectorZ = vecHelp[2];
-		double degree = BrennyAngle.getAngle(new BrennyPoint(Player.getPreciseLocation("").getX(), Player.getPreciseLocation("").getZ()), new BrennyPoint(vectorX, vectorZ));
+		double degree = BrennyAngle.getAngle(new BrennyPoint(getPreciseLocation("").getX(), getPreciseLocation("").getZ()), new BrennyPoint(vectorX, vectorZ));
 		while(degree < 0.0D)
 			degree += 360.0D;
 		rotateHead(degree);
-		degree = BrennyHelpful.getAngle(Math.sqrt((vectorX * vectorX) + (vectorZ * vectorZ)), vectorY - Player.getPreciseLocation(EYE).getY());
+		degree = BrennyHelpful.getAngle(Math.sqrt((vectorX * vectorX) + (vectorZ * vectorZ)), vectorY - getPreciseLocation(EYE).getY());
 		pitchHead(degree);
 	}
 	
@@ -282,7 +244,7 @@ public class Player {
 	 * {@link brennfleck.jarod.tmr.scripts.world.PreciseLocation#PreciseLocation
 	 * PreciseLocation} as a double array.
 	 */
-	public static double[] vec3Helper(PreciseLocation loc) {
+	public double[] vec3Helper(PreciseLocation loc) {
 		return new double[] {loc.getX(), loc.getY(), loc.getZ()};
 	}
 	
@@ -290,16 +252,16 @@ public class Player {
 	 * Sets the players speed precisely. This is cleared with every update of
 	 * the player.
 	 */
-	public static void preciseSpeed(float forwardSpeed, float strafeSpeed) {
+	public void preciseSpeed(float forwardSpeed, float strafeSpeed) {
 		forwardSpeed = forwardSpeed > 1.0F ? 1.0F : forwardSpeed;
 		strafeSpeed = strafeSpeed > 1.0F ? 1.0F : strafeSpeed;
-		((TmrMovementInputFromOptions) getPlayer().movementInput).preciseSpeed(strafeSpeed, forwardSpeed);
+		((TmrMovementInputFromOptions) getRealPlayer().movementInput).preciseSpeed(strafeSpeed, forwardSpeed);
 	}
 	
 	/**
 	 * Returns the theoretical compass bearing the player is currently facing.
 	 */
-	public static int getFacingBearing() {
+	public int getFacingBearing() {
 		return (BrennyHelpful.MathHelpful.floor_double((double) (getHeadAngles()[0] * 4.0F / 360.0F) + 0.5D) & 3) + 200;
 	}
 	
@@ -311,31 +273,31 @@ public class Player {
 	 * @see {@link #EAST}
 	 * @see {@link #WEST}
 	 */
-	public static void faceBearing(int bearing) {
+	public void faceBearing(int bearing) {
 		if(bearing < 200 || bearing > 203) {
 			System.out.println("BAD DIRECTION");
 			return;
 		}
-		getPlayer().rotationYaw = bearing - 200;
+		getRealPlayer().rotationYaw = bearing - 200;
 	}
 	
 	/**
 	 * Sets the player's yaw rotation to face a specific angle.
 	 */
-	public static void rotateHead(double headAngleMustBe) {
+	public void rotateHead(double headAngleMustBe) {
 		headAngleMustBe += 180.0D;
 		while(headAngleMustBe <= -180.0D)
 			headAngleMustBe += 360.0D;
 		while(headAngleMustBe >= 180.0D)
 			headAngleMustBe -= 360.0D;
-		getPlayer().rotationYaw = (float) headAngleMustBe;
+		getRealPlayer().rotationYaw = (float) headAngleMustBe;
 	}
 	
 	/**
 	 * Adds the <code>degree</code> passed to the current yaw rotation of the
 	 * player.
 	 */
-	public static void addRotationToHead(float degree) {
+	public void addRotationToHead(float degree) {
 		rotateHead(getHeadAngles()[0] + degree);
 	}
 	
@@ -345,34 +307,34 @@ public class Player {
 	 * down.</li> <li>0 is horizontal.</li> <li>45 is diagonally up.</li> <li>
 	 * -45 is diagonally down.</li>
 	 */
-	public static void pitchHead(double degree) {
+	public void pitchHead(double degree) {
 		while(degree > 90.0D)
 			degree -= 180.0D;
 		while(degree < -90.0D)
 			degree += 180.0D;
-		getPlayer().rotationPitch = (float) -degree;
+		getRealPlayer().rotationPitch = (float) -degree;
 	}
 	
 	/**
 	 * Returns the head angles in a float array with the yaw being index[0], and
 	 * the pitch being index[1].
 	 */
-	public static float[] getHeadAngles() {
-		return new float[] {getPlayer().rotationYaw, getPlayer().rotationPitch};
+	public float[] getHeadAngles() {
+		return new float[] {getRealPlayer().rotationYaw, getRealPlayer().rotationPitch};
 	}
 	
 	/**
 	 * Toggles the player to swing their currently equipped item.
 	 */
-	public static void swingItem(boolean toggle) {
-		Player.isSwingingItem = toggle;
+	public void swingItem(boolean toggle) {
+		isSwingingItem = toggle;
 	}
 	
 	/**
 	 * Returns whether or not the player has been told to swing by a script.
 	 */
-	public static boolean isSwingingItem() {
-		return Player.isSwingingItem;
+	public boolean isSwingingItem() {
+		return isSwingingItem;
 	}
 	
 	/**
@@ -381,8 +343,8 @@ public class Player {
 	 * 
 	 * @see {@link #useItem(boolean)}
 	 */
-	public static void interact() {
-		Player.isInteracting = true;
+	public void interact() {
+		isInteracting = true;
 	}
 	
 	/**
@@ -391,9 +353,9 @@ public class Player {
 	 * 
 	 * @see {@link #isUsingItem()}
 	 */
-	public static boolean isInteracting() {
-		boolean tmp = Player.isInteracting;
-		Player.isInteracting = false;
+	public boolean isInteracting() {
+		boolean tmp = isInteracting;
+		isInteracting = false;
 		return tmp;
 	}
 	
@@ -403,30 +365,40 @@ public class Player {
 	 * 
 	 * @see {@link #interact}
 	 */
-	public static void useItem(boolean toggle) {
-		Player.isUsingItem = toggle;
+	public void useItem(boolean toggle) {
+		isUsingItem = toggle;
 	}
 	
 	/**
 	 * Returns whether or not the player should be 'using' the currently
 	 * equipped item.
 	 */
-	public static boolean isUsingItem() {
-		return Player.isUsingItem;
+	public boolean isUsingItem() {
+		return isUsingItem;
 	}
 	
 	/**
 	 * Resets all toggles and data that have been set for the player.
 	 */
-	public static void resetAttributes() {
+	public void resetAttributes() {
 		for(int i = 100; i < 104; i++)
 			move(i, false);
-		Player.useItem(false);
-		Player.isInteracting = false;
-		Player.swingItem(false);
-		Player.preciseSpeed(0.0F, 0.0F);
-		Player.sprint(false);
-		Player.sneak(false);
-		Player.clearPathData();
+		useItem(false);
+		isInteracting = false;
+		swingItem(false);
+		preciseSpeed(0.0F, 0.0F);
+		sprint(false);
+		sneak(false);
+		clearPathData();
+	}
+	
+	/**
+	 * Checks whether or not we can interact with the player.
+	 */
+	public static final boolean isValid() {
+		boolean valid = true;
+		if(theActualPlayer == null) valid = false;
+		if(!valid) System.out.println("Player is bad!");
+		return valid;
 	}
 }

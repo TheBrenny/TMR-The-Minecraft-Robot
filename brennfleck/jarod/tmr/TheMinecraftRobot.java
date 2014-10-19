@@ -1,20 +1,21 @@
 package brennfleck.jarod.tmr;
 
-import java.awt.Robot;
 import java.io.File;
 import java.io.IOException;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.TMRSettings;
+import net.minecraft.util.ChatComponentText;
 import brennfleck.jarod.tmr.scripts.Script;
 import brennfleck.jarod.tmr.scripts.ScriptList;
-import brennfleck.jarod.tmr.scripts.ScriptManifest;
+import brennfleck.jarod.tmr.scripts.entities.ControlledPlayer;
+import brennfleck.jarod.tmr.scripts.events.EventObservable;
+import brennfleck.jarod.tmr.scripts.events.TMRListener;
 import brennfleck.jarod.tmr.scripts.examples.AutoQuary;
 import brennfleck.jarod.tmr.scripts.examples.AutoWalker;
 import brennfleck.jarod.tmr.scripts.examples.MazeRunner;
 import brennfleck.jarod.tmr.scripts.minecraft.MinecraftForm;
 import brennfleck.jarod.tmr.utils.TmrInputProxy;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
 
 /**
  * Not a good idea to access this from a script... Just sayin'. None of this
@@ -23,13 +24,13 @@ import net.minecraft.util.ChatComponentText;
  * @author Jarod Brennfleck
  */
 public class TheMinecraftRobot {
-	public static final String TMR_VERSION = "0.3";
+	public static final String TMR_VERSION = "0.4";
 	public static final String TMR_TITLE = "The Minecraft Robot";
+	private static boolean playerNeedsRemake;
 	private Script activeScript;
+	public TMRSettings tmrSettings;
 	
-	public TheMinecraftRobot() {
-		initExtras();
-	}
+	public TheMinecraftRobot() {}
 	
 	public void setActiveScript(Script script) {
 		this.activeScript = script;
@@ -48,18 +49,11 @@ public class TheMinecraftRobot {
 	}
 	
 	public void mkdirs(File parent) {
-		try {
-			if(!parent.exists()) parent.mkdir();
-			String[] toMake = {"scripts", "settings.txt"};
-			for(String child : toMake) {
-				File query = new File(parent, child);
-				if(!query.exists()) {
-					if(child.contains(".")) query.createNewFile();
-					else query.mkdirs();
-				}
-			}
-		} catch(IOException e) {
-			e.printStackTrace();
+		if(!parent.exists()) parent.mkdir();
+		String[] toMake = {"scripts"};
+		for(String child : toMake) {
+			File query = new File(parent, child);
+			if(!query.exists()) query.mkdirs();
 		}
 	}
 	
@@ -67,12 +61,26 @@ public class TheMinecraftRobot {
 		if(getScript() != null) getScript().render(partialTick, notControllingPlayer, mouseX, mouseY);
 	}
 	
+	public void initPlayer() {
+		playerNeedsRemake = true;
+		new ControlledPlayer();
+	}
+	
 	public void initExtras() {
 		try {
 			TmrInputProxy.initRobot();
+			tmrSettings = new TMRSettings(Minecraft.getMinecraft().tmrDataDir);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void addDefaultListeners(EventObservable eo) {
+		// Add stuff here later...
+	}
+	
+	public static boolean playerNeedsRemake() {
+		return playerNeedsRemake;
 	}
 	
 	public static void collectScripts() {
