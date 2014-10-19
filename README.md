@@ -1,5 +1,5 @@
 ##TMR (The Minecraft Robot)
-####<em>Version 0.1</em>
+####<em>Version *0.1*</em>
 
 An API for TMR that will run custom scripts written by others!
 
