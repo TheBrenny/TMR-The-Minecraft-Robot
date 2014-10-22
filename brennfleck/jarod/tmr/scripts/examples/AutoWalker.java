@@ -2,21 +2,18 @@ package brennfleck.jarod.tmr.scripts.examples;
 
 import brennfleck.jarod.tmr.scripts.Script;
 import brennfleck.jarod.tmr.scripts.ScriptManifest;
-import brennfleck.jarod.tmr.scripts.Script.ScriptGui;
 import brennfleck.jarod.tmr.scripts.ScriptManifest.Category;
-import brennfleck.jarod.tmr.scripts.entities.TemporaryPlayerNameTakeover;
-import brennfleck.jarod.tmr.scripts.world.World;
-import net.minecraft.client.Minecraft;
+import brennfleck.jarod.tmr.scripts.entities.ControlledPlayer;
 
-@ScriptManifest(name = "Auto Walker", author = "Jarod Brennfleck", version = "0.3", category = Category.WALKING)
+@ScriptManifest(name = "Auto Walker", author = "Jarod Brennfleck", version = "1.0", category = Category.WALKING)
 public class AutoWalker extends Script {
 	public boolean onStart() {
 		new Gui();
-		TemporaryPlayerNameTakeover.move(TemporaryPlayerNameTakeover.FORWARD, true);
+		ControlledPlayer.move(ControlledPlayer.FORWARD, true);
 		return true;
 	}
 	public long loop() {
-		TemporaryPlayerNameTakeover.jump();
+		ControlledPlayer.jump();
 		return 1000;
 	}
 	public class Gui extends ScriptGui {

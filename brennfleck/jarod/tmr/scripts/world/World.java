@@ -1,9 +1,11 @@
 package brennfleck.jarod.tmr.scripts.world;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import brennfleck.jarod.tmr.scripts.entities.Entity;
 
 /**
  * Holds all getters and setters for the legitimate Minecraft world instance.
@@ -11,7 +13,8 @@ import net.minecraft.client.multiplayer.WorldClient;
  * @author Jarod Brennfleck
  */
 public class World {
-	private static ArrayList<Location> temporaryBlocks = new ArrayList<Location>();
+	private static List<Entity> lastTmrEntityList;
+	private static List lastRealEntityList;
 	
 	private static WorldClient getWorld() {
 		return Minecraft.getMinecraft().theWorld;
@@ -100,5 +103,38 @@ public class World {
 	 */
 	public static void setTemporaryBlock(Location l, Block b) {
 		getWorld().setBlock((int) l.getX(), (int) l.getY(), (int) l.getZ(), net.minecraft.block.Block.getBlockById(b.getID()));
+	}
+	
+	public static List<Entity> getEntities() {
+		List<Entity> ret = new ArrayList<Entity>();
+		if(lastRealEntityList == getWorld().getLoadedEntityList()) return lastTmrEntityList;
+		lastRealEntityList = getWorld().getLoadedEntityList();
+		for(net.minecraft.entity.Entity e : (List<net.minecraft.entity.Entity>) lastRealEntityList) {
+			ret.add(new Entity(e));
+		}
+		lastTmrEntityList = ret;
+		return ret;
+	}
+	/**
+	 * Returns a list of entities in a given area.
+	 */
+	public static List<Entity> getEntitiesInArea(Area a) {
+		List<Entity> l = new ArrayList<Entity>();
+		PreciseLocation p = new PreciseLocation(0,0,0);
+		for(Entity e : getEntities()) {
+			if(a.contains(e.getPreciseLocation("eye"))) l.add(e);
+		}
+		return l;
+	}
+	
+	/**
+	 * Returns the nearest entity.
+	 */
+	public static Entity getNearestEntityInArea(PreciseLocation l, Area a) {
+		Entity n = null;
+		for(Entity e : getEntitiesInArea(a)) {
+			if(n == null || e.getDistanceSqToPreciseLocation(l) < n.getDistanceSqToPreciseLocation(l)) n = e;
+		}
+		return n;
 	}
 }

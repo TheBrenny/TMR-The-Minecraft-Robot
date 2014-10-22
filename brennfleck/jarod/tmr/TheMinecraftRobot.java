@@ -24,7 +24,7 @@ import brennfleck.jarod.tmr.utils.TmrInputProxy;
  * @author Jarod Brennfleck
  */
 public class TheMinecraftRobot {
-	public static final String TMR_VERSION = "0.4";
+	public static final String TMR_VERSION = "0.5";
 	public static final String TMR_TITLE = "The Minecraft Robot";
 	private static boolean playerNeedsRemake;
 	private Script activeScript;
@@ -80,7 +80,9 @@ public class TheMinecraftRobot {
 	}
 	
 	public static boolean playerNeedsRemake() {
-		return playerNeedsRemake;
+		boolean tmp = playerNeedsRemake;
+		playerNeedsRemake = false;
+		return tmp;
 	}
 	
 	public static void collectScripts() {

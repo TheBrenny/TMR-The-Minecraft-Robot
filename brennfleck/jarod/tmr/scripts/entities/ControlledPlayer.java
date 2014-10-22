@@ -26,13 +26,13 @@ public class ControlledPlayer extends EntityPlayerBase {
 	public static final int BACKWARD = 101;
 	public static final int LEFT = 102;
 	public static final int RIGHT = 103;
-	private Location pathStartLocation;
-	private ArrayList<Location> currentPath;
-	private ArrayList<PreciseLocation> abovePath;
-	private long lastTimeAskedForPath = -1L;
-	private boolean isSwingingItem = false;
-	private boolean isInteracting = false;
-	private boolean isUsingItem = false;
+	private static Location pathStartLocation;
+	private static ArrayList<Location> currentPath;
+	private static ArrayList<PreciseLocation> abovePath;
+	private static long lastTimeAskedForPath = -1L;
+	private static boolean isSwingingItem = false;
+	private static boolean isInteracting = false;
+	private static boolean isUsingItem = false;
 	
 	public static ControlledPlayer getPlayer() {
 		return ControlledPlayer.theActualPlayer;
@@ -50,14 +50,14 @@ public class ControlledPlayer extends EntityPlayerBase {
 	/**
 	 * Returns the current path that has been calculated.
 	 */
-	public ArrayList<Location> getCurrentPath() {
+	public static ArrayList<Location> getCurrentPath() {
 		return currentPath;
 	}
 	
 	/**
 	 * Returns the precise path above the currently calculated path.
 	 */
-	public ArrayList<PreciseLocation> getCurrentAbovePath() {
+	public static ArrayList<PreciseLocation> getCurrentAbovePath() {
 		return abovePath;
 	}
 	
@@ -69,7 +69,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * @see {@link #LEFT}
 	 * @see {@link #RIGHT}
 	 */
-	public void move(int direction, boolean state) {
+	public static void move(int direction, boolean state) {
 		TmrMovementInputFromOptions.Direction dir = TmrMovementInputFromOptions.Direction.NONE;
 		// @formatter:off
 		switch(direction) {
@@ -85,7 +85,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	/**
 	 * Returns the current status of the given direction.
 	 */
-	public Object[] getMovementState(int direction) {
+	public static Object[] getMovementState(int direction) {
 		TmrMovementInputFromOptions.Direction dir = TmrMovementInputFromOptions.Direction.NONE;
 		// @formatter:off
 		switch(direction) {
@@ -101,36 +101,36 @@ public class ControlledPlayer extends EntityPlayerBase {
 	/**
 	 * Tells the player to jump once.
 	 */
-	public void jump() {
+	public static void jump() {
 		if(getRealPlayer().flyToggleTimer == 0) ((TmrMovementInputFromOptions) getRealPlayer().movementInput).jump();
 	}
 	
 	/**
 	 * Toggles sneaking for the player.
 	 */
-	public void sneak(boolean toggle) {
+	public static void sneak(boolean toggle) {
 		((TmrMovementInputFromOptions) getRealPlayer().movementInput).sneak(toggle);
 	}
 	
 	/**
 	 * Toggles sprinting for the player.
 	 */
-	public void sprint(boolean toggle) {
+	public static void sprint(boolean toggle) {
 		getRealPlayer().setSprinting(toggle);
 	}
 	
 	/**
 	 * Sends a chat message on the player's behalf.
 	 */
-	public void sendChatMessage(String message) {
+	public static void sendChatMessage(String message) {
 		getRealPlayer().sendChatMessage(message);
 	}
 	
 	/**
 	 * Returns the block currently under the player's feet.
 	 */
-	public Block getBlockUnderFeet() {
-		return World.getBlockAt(getLocation("").shift(0, -1, 0));
+	public static Block getBlockUnderFeet() {
+		return World.getBlockAt(theActualPlayer.getLocation("").shift(0, -1, 0));
 	}
 	
 	/**
@@ -138,8 +138,8 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * {@link brennfleck.jarod.tmr.scripts.world.Location#Location Location} by
 	 * making a path first.
 	 */
-	public String[] walkTo(Location location) {
-		if((currentPath != null && currentPath.size() == 0) || new Area(location, location.clone().shift(0, 3, 0)).contains(getLocation(EYE))) {
+	public static String[] walkTo(Location location) {
+		if((currentPath != null && currentPath.size() == 0) || new Area(location, location.clone().shift(0, 3, 0)).contains(theActualPlayer.getLocation(EYE))) {
 			move(FORWARD, false);
 			clearPathData();
 			return new String[] {"true", location.getX() + "", location.getY() + "", location.getZ() + ""};
@@ -164,7 +164,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * AStar} path and returns the path made, or returns null if no path can be
 	 * made.
 	 */
-	public AStar makePath(Location l) {
+	public static AStar makePath(Location l) {
 		try {
 			l = World.getMostSuitableStandingLocation(l);
 			final Location a = World.getMostSuitableStandingLocation(new Location(getRealPlayer().posX, getRealPlayer().posY, getRealPlayer().posZ));
@@ -198,22 +198,22 @@ public class ControlledPlayer extends EntityPlayerBase {
 	/**
 	 * Clears all path data that has been previously used.
 	 */
-	public void clearPathData() {
+	public static void clearPathData() {
 		currentPath = null;
 		abovePath = null;
 		pathStartLocation = null;
 	}
 	
-	private Location walkHelper() {
+	private static Location walkHelper() {
 		boolean inLiquid = getRealPlayer().isInWater() || getRealPlayer().handleLavaMovement();
-		double vectorY = (vec3Helper(pathStartLocation)[1] + 1) - getLocation("").getY();
+		double vectorY = (vec3Helper(pathStartLocation)[1] + 1) - theActualPlayer.getLocation("").getY();
 		boolean shouldJump = vectorY > 0;
 		if(shouldJump || inLiquid) jump();
 		double shift = (double) ((int) (getRealPlayer().width + 1.0F)) * 0.5D;
 		Location t = currentPath.get(0);
 		faceLocation(new PreciseLocation(t.getX() + shift, t.getY() + 1.0D + shift, t.getZ() + shift));
 		move(FORWARD, true);
-		Location hLoc = World.getMostSuitableStandingLocation(getLocation(""));
+		Location hLoc = World.getMostSuitableStandingLocation(theActualPlayer.getLocation(""));
 		if(hLoc.equals(t)) {
 			currentPath.remove(0);
 			abovePath.remove(0);
@@ -226,16 +226,16 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * {@link brennfleck.jarod.tmr.scripts.world.PreciseLocation#PreciseLocation
 	 * PreciseLocation}.
 	 */
-	public void faceLocation(PreciseLocation location) {
+	public static void faceLocation(PreciseLocation location) {
 		double[] vecHelp = vec3Helper(location);
 		double vectorX = vecHelp[0];
 		double vectorY = vecHelp[1];
 		double vectorZ = vecHelp[2];
-		double degree = BrennyAngle.getAngle(new BrennyPoint(getPreciseLocation("").getX(), getPreciseLocation("").getZ()), new BrennyPoint(vectorX, vectorZ));
+		double degree = BrennyAngle.getAngle(new BrennyPoint(theActualPlayer.getPreciseLocation("").getX(), theActualPlayer.getPreciseLocation("").getZ()), new BrennyPoint(vectorX, vectorZ));
 		while(degree < 0.0D)
 			degree += 360.0D;
 		rotateHead(degree);
-		degree = BrennyHelpful.getAngle(Math.sqrt((vectorX * vectorX) + (vectorZ * vectorZ)), vectorY - getPreciseLocation(EYE).getY());
+		degree = BrennyHelpful.getAngle(Math.sqrt((vectorX * vectorX) + (vectorZ * vectorZ)), vectorY - theActualPlayer.getPreciseLocation(EYE).getY());
 		pitchHead(degree);
 	}
 	
@@ -244,7 +244,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * {@link brennfleck.jarod.tmr.scripts.world.PreciseLocation#PreciseLocation
 	 * PreciseLocation} as a double array.
 	 */
-	public double[] vec3Helper(PreciseLocation loc) {
+	public static double[] vec3Helper(PreciseLocation loc) {
 		return new double[] {loc.getX(), loc.getY(), loc.getZ()};
 	}
 	
@@ -252,17 +252,10 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * Sets the players speed precisely. This is cleared with every update of
 	 * the player.
 	 */
-	public void preciseSpeed(float forwardSpeed, float strafeSpeed) {
+	public static void preciseSpeed(float forwardSpeed, float strafeSpeed) {
 		forwardSpeed = forwardSpeed > 1.0F ? 1.0F : forwardSpeed;
 		strafeSpeed = strafeSpeed > 1.0F ? 1.0F : strafeSpeed;
 		((TmrMovementInputFromOptions) getRealPlayer().movementInput).preciseSpeed(strafeSpeed, forwardSpeed);
-	}
-	
-	/**
-	 * Returns the theoretical compass bearing the player is currently facing.
-	 */
-	public int getFacingBearing() {
-		return (BrennyHelpful.MathHelpful.floor_double((double) (getHeadAngles()[0] * 4.0F / 360.0F) + 0.5D) & 3) + 200;
 	}
 	
 	/**
@@ -273,7 +266,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * @see {@link #EAST}
 	 * @see {@link #WEST}
 	 */
-	public void faceBearing(int bearing) {
+	public static void faceBearing(int bearing) {
 		if(bearing < 200 || bearing > 203) {
 			System.out.println("BAD DIRECTION");
 			return;
@@ -284,7 +277,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	/**
 	 * Sets the player's yaw rotation to face a specific angle.
 	 */
-	public void rotateHead(double headAngleMustBe) {
+	public static void rotateHead(double headAngleMustBe) {
 		headAngleMustBe += 180.0D;
 		while(headAngleMustBe <= -180.0D)
 			headAngleMustBe += 360.0D;
@@ -297,8 +290,8 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * Adds the <code>degree</code> passed to the current yaw rotation of the
 	 * player.
 	 */
-	public void addRotationToHead(float degree) {
-		rotateHead(getHeadAngles()[0] + degree);
+	public static void addRotationToHead(float degree) {
+		rotateHead(theActualPlayer.getHeadAngles()[0] + degree);
 	}
 	
 	/**
@@ -307,7 +300,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * down.</li> <li>0 is horizontal.</li> <li>45 is diagonally up.</li> <li>
 	 * -45 is diagonally down.</li>
 	 */
-	public void pitchHead(double degree) {
+	public static void pitchHead(double degree) {
 		while(degree > 90.0D)
 			degree -= 180.0D;
 		while(degree < -90.0D)
@@ -316,24 +309,16 @@ public class ControlledPlayer extends EntityPlayerBase {
 	}
 	
 	/**
-	 * Returns the head angles in a float array with the yaw being index[0], and
-	 * the pitch being index[1].
-	 */
-	public float[] getHeadAngles() {
-		return new float[] {getRealPlayer().rotationYaw, getRealPlayer().rotationPitch};
-	}
-	
-	/**
 	 * Toggles the player to swing their currently equipped item.
 	 */
-	public void swingItem(boolean toggle) {
+	public static void swingItem(boolean toggle) {
 		isSwingingItem = toggle;
 	}
 	
 	/**
 	 * Returns whether or not the player has been told to swing by a script.
 	 */
-	public boolean isSwingingItem() {
+	public static boolean isSwingingItem() {
 		return isSwingingItem;
 	}
 	
@@ -343,7 +328,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * 
 	 * @see {@link #useItem(boolean)}
 	 */
-	public void interact() {
+	public static void interact() {
 		isInteracting = true;
 	}
 	
@@ -353,7 +338,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * 
 	 * @see {@link #isUsingItem()}
 	 */
-	public boolean isInteracting() {
+	public static boolean isInteracting() {
 		boolean tmp = isInteracting;
 		isInteracting = false;
 		return tmp;
@@ -365,7 +350,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * 
 	 * @see {@link #interact}
 	 */
-	public void useItem(boolean toggle) {
+	public static void useItem(boolean toggle) {
 		isUsingItem = toggle;
 	}
 	
@@ -373,14 +358,14 @@ public class ControlledPlayer extends EntityPlayerBase {
 	 * Returns whether or not the player should be 'using' the currently
 	 * equipped item.
 	 */
-	public boolean isUsingItem() {
+	public static boolean isUsingItem() {
 		return isUsingItem;
 	}
 	
 	/**
 	 * Resets all toggles and data that have been set for the player.
 	 */
-	public void resetAttributes() {
+	public static void resetAttributes() {
 		for(int i = 100; i < 104; i++)
 			move(i, false);
 		useItem(false);
@@ -398,6 +383,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	public static final boolean isValid() {
 		boolean valid = true;
 		if(theActualPlayer == null) valid = false;
+		if(theActualPlayer != null && theActualPlayer.theRealEntity == null) valid = false;
 		if(!valid) System.out.println("Player is bad!");
 		return valid;
 	}

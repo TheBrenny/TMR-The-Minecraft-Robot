@@ -309,7 +309,7 @@ public class BrennyHelpful {
 		 */
 		public static int max_int(int... ints) {
 			if(ints == null) return -1;
-			int max = ints[0];
+			int max = Integer.MIN_VALUE;
 			for(int i : ints)
 				max = i > max ? i : max;
 			return max;
@@ -320,7 +320,7 @@ public class BrennyHelpful {
 		 */
 		public static int[] maxAndIndex_int(int... ints) {
 			if(ints == null) return new int[] {-1, -1};
-			int max = ints[0];
+			int max = Integer.MIN_VALUE;
 			int index = 0;
 			for(int i = 0; i < ints.length; i++) {
 				if(ints[i] > max) max = ints[(index = i)];
@@ -333,7 +333,7 @@ public class BrennyHelpful {
 		 */
 		public static double max_double(double... doubles) {
 			if(doubles == null) return -1;
-			double max = doubles[0];
+			double max = Double.MIN_VALUE;
 			for(double i : doubles)
 				max = i > max ? i : max;
 			return max;
@@ -344,7 +344,7 @@ public class BrennyHelpful {
 		 */
 		public static double[] maxAndIndex_double(double... doubles) {
 			if(doubles == null) return new double[] {-1, -1};
-			double max = doubles[0];
+			double max = Double.MIN_VALUE;
 			int index = 0;
 			for(int i = 0; i < doubles.length; i++) {
 				if(doubles[i] > max) max = doubles[(index = i)];
@@ -357,7 +357,7 @@ public class BrennyHelpful {
 		 */
 		public static float max_float(float... floats) {
 			if(floats == null) return -1;
-			float max = floats[0];
+			float max = Float.MIN_VALUE;
 			for(float i : floats)
 				max = i > max ? i : max;
 			return max;
@@ -368,7 +368,7 @@ public class BrennyHelpful {
 		 */
 		public static float[] maxAndIndex_float(float... floats) {
 			if(floats == null) return new float[] {-1, -1};
-			float max = floats[0];
+			float max = Float.MIN_VALUE;
 			int index = 0;
 			for(int i = 0; i < floats.length; i++) {
 				if(floats[i] > max) max = floats[(index = i)];

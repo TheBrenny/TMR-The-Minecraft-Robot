@@ -3,8 +3,9 @@ package brennfleck.jarod.tmr.scripts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import brennfleck.jarod.tmr.TheMinecraftRobot;
-import brennfleck.jarod.tmr.scripts.entities.TemporaryPlayerNameTakeover;
+import brennfleck.jarod.tmr.scripts.entities.ControlledPlayer;
 import brennfleck.jarod.tmr.scripts.events.EventObservable;
+import brennfleck.jarod.tmr.scripts.events.TMRListener;
 import brennfleck.jarod.tmr.scripts.world.World;
 import brennfleck.jarod.tmr.utils.TmrInputProxy;
 
@@ -81,11 +82,11 @@ public abstract class Script {
 	 * aborts silently.
 	 */
 	public final void start() {
-		if(Minecraft.getTMR().getScript() != null) return;
 		if(eventObservable == null) eventObservable = new EventObservable();
 		System.out.println("Starting script: " + getManifest().name());
 		TheMinecraftRobot.sendMessageToLocalChatBox("Starting script: " + getManifest().name());
 		running = onStart();
+		System.out.println(running);
 		if(!isValid() || !running) stop();
 		if(running) thread.start();
 	}
@@ -106,11 +107,11 @@ public abstract class Script {
 		System.out.println("Stopping script: " + getManifest().name());
 		TheMinecraftRobot.sendMessageToLocalChatBox("Stopping script: " + getManifest().name());
 		onStop();
-		TemporaryPlayerNameTakeover.resetAttributes();
+		ControlledPlayer.resetAttributes();
 		running = false;
 		paused = false;
 		if(Minecraft.getMinecraft().currentScreen == null) TmrInputProxy.setMouseGrabbed(true);
-		eventObservable.deleteListeners();
+		if(eventObservable != null) eventObservable.deleteListeners();
 		Minecraft.getTMR().addDefaultListeners(eventObservable);
 		Minecraft.getTMR().setActiveScript(null);
 	}
@@ -121,6 +122,21 @@ public abstract class Script {
 	 */
 	public final int getState() {
 		return running ? (paused ? 2 : 1) : 0;
+	}
+	
+	/**
+	 * Adds an event listener to the event listener list.
+	 */
+	public final void addEventListener(TMRListener l) {
+		try {
+			if(eventObservable == null) eventObservable = new EventObservable();
+			eventObservable.addListener(l);
+		} catch(NullPointerException e) {
+			TheMinecraftRobot.sendMessageToLocalChatBox("Minebot: Event listener was null!");
+		} catch(Exception e) {
+			TheMinecraftRobot.sendMessageToLocalChatBox("Minebot: Could not attach event listener!");
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -169,6 +185,6 @@ public abstract class Script {
 	 * Returns whether or not we are valid and ready for script execution.
 	 */
 	public static final boolean isValid() {
-		return TemporaryPlayerNameTakeover.isValid() && World.isValid();
+		return ControlledPlayer.isValid() && World.isValid();
 	}
 }

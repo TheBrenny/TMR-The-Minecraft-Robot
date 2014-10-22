@@ -23,15 +23,23 @@ public class Block {
 	private boolean isCollidable;
 	private boolean isNormalCube;
 	private Material material;
+	private int metadata;
 	
 	/**
-	 * Constructs a block by it's ID.
+	 * Constructs a block object buy it's ID.
 	 */
 	public Block(int id) {
-		this(net.minecraft.block.Block.getBlockById(id), id);
+		this(net.minecraft.block.Block.getBlockById(id), id, 0);
 	}
 	
-	private Block(net.minecraft.block.Block block, int id) {
+	/**
+	 * Constructs a block object by it's ID and metadata.
+	 */
+	public Block(int id, int metadata) {
+		this(net.minecraft.block.Block.getBlockById(id), id, metadata);
+	}
+	
+	private Block(net.minecraft.block.Block block, int id, int metadata) {
 		this.idNum = id;
 		this.name = net.minecraft.block.Block.blockRegistry.getNameForObject(block);
 		this.slipperiness = block.slipperiness;
@@ -40,6 +48,7 @@ public class Block {
 		this.isCollidable = !AStar.canBlockBeWalkedThrough(this.idNum);
 		this.isNormalCube = block.isBlockNormalCube();
 		this.material = Material.getMaterial(block.getMaterial());
+		this.metadata = metadata;
 	}
 	
 	/**
@@ -56,6 +65,13 @@ public class Block {
 	 */
 	public int getID() {
 		return this.idNum;
+	}
+	
+	/**
+	 * Returns the metadata of the block.
+	 */
+	public int getMetadata() {
+		return this.metadata;
 	}
 	
 	/**

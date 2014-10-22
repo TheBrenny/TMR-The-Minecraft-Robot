@@ -1,4 +1,4 @@
-package brennfleck.jarod.tmr.scripts.events;
+package brennfleck.jarod.tmr.scripts.events.chat;
 
 /**
  * A Chat Event is an event that occurs whenever a chat message is sent.

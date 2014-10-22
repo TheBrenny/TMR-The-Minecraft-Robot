@@ -8,7 +8,9 @@ public class Entity {
 	public static final String BASE = "feet";
 	protected net.minecraft.entity.Entity theRealEntity;
 	
-	public Entity(net.minecraft.entity.Entity e) {}
+	public Entity(net.minecraft.entity.Entity e) {
+		this.theRealEntity = e;
+	}
 	
 	/**
 	 * Returns the location of the entity, with the y-coordinate depending on
@@ -34,5 +36,14 @@ public class Entity {
 	public PreciseLocation getPreciseLocation(String spot) {
 		double theY = spot.equalsIgnoreCase(MAIN) ? theRealEntity.posY : theRealEntity.boundingBox.minY;
 		return new PreciseLocation(theRealEntity.posX, theY, theRealEntity.posZ);
+	}
+
+	
+	public double getDistanceSqToPreciseLocation(PreciseLocation l) {
+		PreciseLocation pl = getPreciseLocation("eye");
+		double var2 = pl.getX() - l.getX();
+		double var4 = pl.getY() - l.getY();
+		double var6 = pl.getZ() - l.getZ();
+		return var2 * var2 + var4 * var4 + var6 * var6;
 	}
 }

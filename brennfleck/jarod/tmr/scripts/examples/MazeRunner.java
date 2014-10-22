@@ -1,6 +1,5 @@
 package brennfleck.jarod.tmr.scripts.examples;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import brennfleck.jarod.helpfulthings.BrennyHelpful;
@@ -8,7 +7,7 @@ import brennfleck.jarod.pathing.AStar;
 import brennfleck.jarod.tmr.scripts.Script;
 import brennfleck.jarod.tmr.scripts.ScriptManifest;
 import brennfleck.jarod.tmr.scripts.ScriptManifest.Category;
-import brennfleck.jarod.tmr.scripts.entities.TemporaryPlayerNameTakeover;
+import brennfleck.jarod.tmr.scripts.entities.ControlledPlayer;
 import brennfleck.jarod.tmr.scripts.minecraft.MinecraftForm;
 import brennfleck.jarod.tmr.scripts.world.Location;
 
@@ -29,9 +28,9 @@ public class MazeRunner extends Script {
 	
 	public long loop() {
 		if(target == null) return 3000;
-		String[] a = TemporaryPlayerNameTakeover.walkTo(target);
+		String[] a = ControlledPlayer.walkTo(target);
 		nextLocation = new Location(Double.parseDouble(a[1]), Double.parseDouble(a[2]), Double.parseDouble(a[3]));
-		currentLocation = TemporaryPlayerNameTakeover.getLocation("").shift(0, -1, 0).getNonPrecise();
+		currentLocation = ControlledPlayer.getPlayer().getLocation("").shift(0, -1, 0).getNonPrecise();
 		if(a[0].equals("true")) {
 			MinecraftForm.sendMessageToLocalChatBox("Completed run!");
 			stop();
@@ -42,9 +41,9 @@ public class MazeRunner extends Script {
 	
 	public void createPath(int x, int y, int z) {
 		Location l;
-		AStar path = TemporaryPlayerNameTakeover.makePath(l = new Location(x, y, z));
+		AStar path = ControlledPlayer.makePath(l = new Location(x, y, z));
 		if(path != null) {
-			currentPath = TemporaryPlayerNameTakeover.getCurrentPath();
+			currentPath = ControlledPlayer.getCurrentPath();
 			this.maxSteps = currentPath.size();
 			stepsComplete = 0;
 			target = l;

@@ -3,17 +3,16 @@ package brennfleck.jarod.tmr.scripts.examples;
 import brennfleck.jarod.tmr.scripts.Script;
 import brennfleck.jarod.tmr.scripts.ScriptManifest;
 import brennfleck.jarod.tmr.scripts.ScriptManifest.Category;
+import brennfleck.jarod.tmr.scripts.entities.ControlledPlayer;
 import brennfleck.jarod.tmr.scripts.entities.Inventory;
 import brennfleck.jarod.tmr.scripts.entities.Item;
-import brennfleck.jarod.tmr.scripts.entities.TemporaryPlayerNameTakeover;
 import brennfleck.jarod.tmr.scripts.entities.Item.ItemType;
 import brennfleck.jarod.tmr.scripts.minecraft.MinecraftForm;
 import brennfleck.jarod.tmr.scripts.world.Block;
 import brennfleck.jarod.tmr.scripts.world.Location;
 import brennfleck.jarod.tmr.scripts.world.World;
-import brennfleck.jarod.tmr.utils.TmrInputProxy;
 
-@ScriptManifest(name = "Auto Quary", version = "0.1", author = "Jarod Brennfleck", category = Category.MINING)
+@ScriptManifest(name = "Auto Quary - BROKEN", version = "0.1", author = "Jarod Brennfleck", category = Category.MINING)
 public class AutoQuary extends Script {
 	public boolean[][][] blocks;
 	public Location startPosition;
@@ -39,7 +38,7 @@ public class AutoQuary extends Script {
 			for(boolean[] width : depth)
 				for(int i = 0; i < width.length; i++)
 					width[i] = false;
-		startPosition = TemporaryPlayerNameTakeover.getLocation("").shift(0, -1, 0).getNonPrecise();
+		startPosition = ControlledPlayer.getPlayer().getLocation("").shift(0, -1, 0).getNonPrecise();
 	}
 	
 	public int[] getNextBlock() {
@@ -51,6 +50,7 @@ public class AutoQuary extends Script {
 	}
 	
 	public void setBlock(int[] coord, boolean state) {
+		int ySpot = 0, xSpot = 1, zSpot = 2;
 		blocks[coord[0]][coord[1]][coord[2]] = state;
 	}
 	
@@ -76,6 +76,15 @@ public class AutoQuary extends Script {
 		Block next = World.getBlockAt(loc = new Location(startPosition.getX() + nextBlock[1], startPosition.getY() - nextBlock[0], startPosition.getZ() + nextBlock[2]));
 		Item.ItemType bestTool = next.getBestTool();
 		int tool = (bestTool == Item.ItemType.SHOVEL ? 0 : (bestTool == Item.ItemType.PICKAXE ? 1 : 2));
+		Inventory.setActiveItem(tool);
+		if(ControlledPlayer.walkTo(loc)[0].equals("true")) {
+			ControlledPlayer.faceLocation(loc.clone().shift(0.5, 0, 0.5));
+			ControlledPlayer.swingItem(true);
+			if(World.getBlockAt(loc).getID() == 0) {
+				ControlledPlayer.swingItem(false);
+				setBlock(nextBlock, true);
+			}
+		}
 		return 100;
 	}
 	
@@ -90,7 +99,7 @@ public class AutoQuary extends Script {
 			MinecraftForm.sendMessageToLocalChatBox("Already mining!");
 			return 0;
 		}
-		command = command.substring(17);
+		command = getCommand(command);
 		if(command.equalsIgnoreCase("ready")) {
 			onPaused();
 			if((pick && shovel) || askedReady) {

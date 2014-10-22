@@ -1,5 +1,5 @@
 ##TMR (The Minecraft Robot)
-####<em>Version 0.4</em>
+####<em>Version 0.5</em>
 
 An API for TMR that will run custom scripts written by others!
 
@@ -17,7 +17,9 @@ Another note: this API is still in the early stages, so surely theres bound to b
 
 Checklist:
 - [x] Basic player interactions.
-  - [x] Basic walking method...
+  - [x] Better player interactions.
+  - [ ] Even better player interactions.
+ - [x] Basic walking method...
   - [ ] Extended walking method...
 - [x] Basic world queries.
 - [x] Basic block interactions.
@@ -26,7 +28,7 @@ Checklist:
   - [ ] Advanced script framework.
 - [x] Basic inventory interactions, (eh, it <em>somewhat</em> works...).
 - [x] Basic entity queries.
-  - [ ] There's a way of accessing entity objects.
+  - [x] There's a way of accessing entity objects.
 - [ ] More beautiful code.
 - [x] Walking script example.
 - [ ] Mining script example.
@@ -34,3 +36,8 @@ Checklist:
 - [ ] Combat script example.
 - [ ] Crafting script example.
 - [ ] Fishing script example.
+- [ ] More beautiful code.
+ - [ ] Less spread out classes.
+ - [ ] Try remove multiple methods that do the same thing.
+ - [ ] Clean up useless variables, methods, and classes.
+ - [ ] Clean up useless logic.
