@@ -5,9 +5,9 @@ import net.minecraft.client.gui.Gui;
 import brennfleck.jarod.tmr.TheMinecraftRobot;
 import brennfleck.jarod.tmr.scripts.entities.ControlledPlayer;
 import brennfleck.jarod.tmr.scripts.events.EventObservable;
-import brennfleck.jarod.tmr.scripts.events.TMRListener;
+import brennfleck.jarod.tmr.scripts.events.listeners.TMRListener;
 import brennfleck.jarod.tmr.scripts.world.World;
-import brennfleck.jarod.tmr.utils.TmrInputProxy;
+import brennfleck.jarod.tmr.util.TmrInputProxy;
 
 /**
  * A base class for a script.
@@ -15,7 +15,7 @@ import brennfleck.jarod.tmr.utils.TmrInputProxy;
  * @author Jarod Brennfleck
  */
 public abstract class Script {
-	private static EventObservable eventObservable;
+	public static final String scriptCommandTrigger = "!~tmr:";
 	protected boolean isOkayToUngrabMouse = false;
 	private Thread thread;
 	private boolean running = false;
@@ -82,11 +82,10 @@ public abstract class Script {
 	 * aborts silently.
 	 */
 	public final void start() {
-		if(eventObservable == null) eventObservable = new EventObservable();
+		if(EventObservable.getObservable() == null) new EventObservable();
 		System.out.println("Starting script: " + getManifest().name());
 		TheMinecraftRobot.sendMessageToLocalChatBox("Starting script: " + getManifest().name());
 		running = onStart();
-		System.out.println(running);
 		if(!isValid() || !running) stop();
 		if(running) thread.start();
 	}
@@ -111,8 +110,8 @@ public abstract class Script {
 		running = false;
 		paused = false;
 		if(Minecraft.getMinecraft().currentScreen == null) TmrInputProxy.setMouseGrabbed(true);
-		if(eventObservable != null) eventObservable.deleteListeners();
-		Minecraft.getTMR().addDefaultListeners(eventObservable);
+		if(EventObservable.getObservable() != null) EventObservable.getObservable().deleteListeners();
+		Minecraft.getTMR().addDefaultListeners(EventObservable.getObservable());
 		Minecraft.getTMR().setActiveScript(null);
 	}
 	
@@ -129,8 +128,8 @@ public abstract class Script {
 	 */
 	public final void addEventListener(TMRListener l) {
 		try {
-			if(eventObservable == null) eventObservable = new EventObservable();
-			eventObservable.addListener(l);
+			if(EventObservable.getObservable() == null) new EventObservable();
+			EventObservable.getObservable().addListener(l);
 		} catch(NullPointerException e) {
 			TheMinecraftRobot.sendMessageToLocalChatBox("Minebot: Event listener was null!");
 		} catch(Exception e) {
@@ -154,7 +153,7 @@ public abstract class Script {
 	 * "!~tmr:ready" > "ready"
 	 */
 	public String getCommand(String command) {
-		return command.substring("!~tmr:".length());
+		return command.substring(scriptCommandTrigger.length());
 	}
 	
 	/**

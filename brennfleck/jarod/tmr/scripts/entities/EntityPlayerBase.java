@@ -2,7 +2,13 @@ package brennfleck.jarod.tmr.scripts.entities;
 
 import net.minecraft.entity.player.EntityPlayer;
 import brennfleck.jarod.helpfulthings.BrennyHelpful;
+import brennfleck.jarod.tmr.scripts.items.PlayerInventory;
 
+/**
+ * The base for all entities that are players.
+ * 
+ * @author Jarod Brennfleck
+ */
 public abstract class EntityPlayerBase extends Entity {
 	public static final int SOUTH = 200;
 	public static final int WEST = 201;
@@ -10,12 +16,13 @@ public abstract class EntityPlayerBase extends Entity {
 	public static final int EAST = 203;
 	public static final String EYE = "eye";
 	public static final String FEET = "feet";
+	private PlayerInventory inventory;
 	
 	public EntityPlayerBase(EntityPlayer e) {
 		super(e);
 	}
 	
-	private EntityPlayer getPlayerBase() {
+	public EntityPlayer getPlayerBase() {
 		return (EntityPlayer) theRealEntity;
 	}
 	
@@ -53,5 +60,16 @@ public abstract class EntityPlayerBase extends Entity {
 	 */
 	public boolean isJumping() {
 		return getPlayerBase().isJumping;
+	}
+	
+	/**
+	 * Returns the inventory of this player.
+	 */
+	public PlayerInventory getInventory() {
+		return inventory != null ? inventory : (inventory = new PlayerInventory(this));
+	}
+
+	public static double getMaximumReach() {
+		return 4.5;
 	}
 }

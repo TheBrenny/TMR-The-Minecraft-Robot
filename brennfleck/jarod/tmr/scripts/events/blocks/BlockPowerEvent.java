@@ -4,14 +4,14 @@ import brennfleck.jarod.tmr.scripts.world.Block;
 import brennfleck.jarod.tmr.scripts.world.Location;
 
 public class BlockPowerEvent extends BlockEvent {
-	private int power;
+	private float power;
 	
-	public BlockPowerEvent(Location l, Block b, int power) {
+	public BlockPowerEvent(Location l, Block b, float power) {
 		super(l, b);
 		this.power = power;
 	}
 	
-	public int getPower() {
+	public float getPower() {
 		return power;
 	}
 }

@@ -1,5 +1,5 @@
 ##TMR (The Minecraft Robot)
-####<em>Version 0.5</em>
+####<em>Version 0.7</em>
 
 An API for TMR that will run custom scripts written by others!
 
@@ -16,28 +16,38 @@ Another note: this API is still in the early stages, so surely theres bound to b
 <hr>
 
 Checklist:
+- [ ] **UPGRADE TO MINECRAFT 1.8**
 - [x] Basic player interactions.
-  - [x] Better player interactions.
-  - [ ] Even better player interactions.
+ - [x] Better player interactions.
+ - [ ] Even better player interactions.
  - [x] Basic walking method...
   - [ ] Extended walking method...
 - [x] Basic world queries.
+ - [ ] Block interactions.
+  - [x] Chest interactions.
+  - [ ] Furnace interactions.
+  - [ ] Crafting table interactions.
+  - [ ] Other interfaces a little later...
 - [x] Basic block interactions.
-  - [ ] Advanced block interactions.
+ - [ ] Advanced block interactions.
 - [x] Basic script framework.
-  - [ ] Advanced script framework.
+ - [x] Event listening system.
+  - [x] Damage events.
+  - [x] Chat events.
+  - [x] World update events, (eh, it <em>somewhat</em> works...).
+ - [ ] Advanced script framework.
 - [x] Basic inventory interactions, (eh, it <em>somewhat</em> works...).
 - [x] Basic entity queries.
-  - [x] There's a way of accessing entity objects.
-- [ ] More beautiful code.
 - [x] Walking script example.
 - [ ] Mining script example.
 - [x] Pathfinding script example.
 - [ ] Combat script example.
 - [ ] Crafting script example.
 - [ ] Fishing script example.
+- [x] Event Listener example.
 - [ ] More beautiful code.
- - [ ] Less spread out classes.
+ - [x] Less spread out classes.
+ - [ ] Better JavaDocs.
  - [ ] Try remove multiple methods that do the same thing.
  - [ ] Clean up useless variables, methods, and classes.
  - [ ] Clean up useless logic.

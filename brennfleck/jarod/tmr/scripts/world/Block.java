@@ -1,12 +1,7 @@
 package brennfleck.jarod.tmr.scripts.world;
 
-import brennfleck.jarod.pathing.AStar;
-import brennfleck.jarod.tmr.scripts.entities.Item;
-import brennfleck.jarod.tmr.scripts.entities.Item.ItemType;
-
 import net.minecraft.block.Block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
+import brennfleck.jarod.pathing.AStar;
 
 /**
  * Holds data for a block.
@@ -29,19 +24,23 @@ public class Block {
 	 * Constructs a block object buy it's ID.
 	 */
 	public Block(int id) {
-		this(net.minecraft.block.Block.getBlockById(id), id, 0);
+		this(net.minecraft.block.Block.getBlockById(id), 0);
 	}
 	
 	/**
 	 * Constructs a block object by it's ID and metadata.
 	 */
 	public Block(int id, int metadata) {
-		this(net.minecraft.block.Block.getBlockById(id), id, metadata);
+		this(net.minecraft.block.Block.getBlockById(id), metadata);
 	}
 	
-	private Block(net.minecraft.block.Block block, int id, int metadata) {
-		this.idNum = id;
-		this.name = net.minecraft.block.Block.blockRegistry.getNameForObject(block);
+	public Block(Location l) {
+		this(World.getRealWorld().getBlock((int) l.getX(), (int) l.getY(), (int) l.getZ()), World.getRealWorld().getBlockMetadata((int) l.getX(), (int) l.getY(), (int) l.getZ()));
+	}
+	
+	private Block(net.minecraft.block.Block block, int metadata) {
+		this.idNum = net.minecraft.block.Block.getIdFromBlock(block);
+		this.name = block.getLocalizedName();
 		this.slipperiness = block.slipperiness;
 		this.stepSound = block.stepSound;
 		this.canProvidePower = block.canProvidePower();
@@ -54,11 +53,11 @@ public class Block {
 	/**
 	 * Returns the best tool that can harvetst this block.
 	 */
-	public Item.ItemType getBestTool() {
-		if(material.isAnyOf(Material.IRON, Material.ANVIL, Material.ROCK)) return ItemType.PICKAXE;
-		if(material.isAnyOf(Material.GRASS, Material.GROUND, Material.SAND, Material.SNOW)) return ItemType.SHOVEL;
-		return ItemType.OTHER;
-	}
+//	public ItemType getBestTool() {
+//		if(material.isAnyOf(Material.IRON, Material.ANVIL, Material.ROCK)) return ItemType.PICKAXE;
+//		if(material.isAnyOf(Material.GRASS, Material.GROUND, Material.SAND, Material.SNOW)) return ItemType.SHOVEL;
+//		return ItemType.OTHER;
+//	}
 	
 	/**
 	 * Returns the id of the block.
@@ -87,6 +86,10 @@ public class Block {
 	 */
 	public String toString() {
 		return "id=" + idNum + ", name=" + name + ", collides=" + isCollidable;
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	/**

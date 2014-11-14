@@ -1,4 +1,4 @@
-package brennfleck.jarod.tmr.utils;
+package brennfleck.jarod.tmr.util;
 
 import java.awt.AWTException;
 import java.awt.Robot;

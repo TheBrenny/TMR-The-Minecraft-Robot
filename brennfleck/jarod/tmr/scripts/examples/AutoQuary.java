@@ -4,9 +4,6 @@ import brennfleck.jarod.tmr.scripts.Script;
 import brennfleck.jarod.tmr.scripts.ScriptManifest;
 import brennfleck.jarod.tmr.scripts.ScriptManifest.Category;
 import brennfleck.jarod.tmr.scripts.entities.ControlledPlayer;
-import brennfleck.jarod.tmr.scripts.entities.Inventory;
-import brennfleck.jarod.tmr.scripts.entities.Item;
-import brennfleck.jarod.tmr.scripts.entities.Item.ItemType;
 import brennfleck.jarod.tmr.scripts.minecraft.MinecraftForm;
 import brennfleck.jarod.tmr.scripts.world.Block;
 import brennfleck.jarod.tmr.scripts.world.Location;
@@ -59,14 +56,18 @@ public class AutoQuary extends Script {
 		if(!isReady) return 3000;
 		if(firstRun) firstRun();
 		int[] pt;
-		if(shovel && (Inventory.getItemAt(0, 0) == null || Inventory.getItemAt(0, 0).getItemType() != Item.ItemType.SHOVEL)) {
-			pt = Inventory.getFirstOccurrencePoint(Item.ItemType.SHOVEL);
-			Inventory.swapItemsAt(0, 0, pt[0], pt[1]);
-		}
-		if(pick && (Inventory.getItemAt(1, 0) == null || Inventory.getItemAt(1, 0).getItemType() != Item.ItemType.PICKAXE)) {
-			pt = Inventory.getFirstOccurrencePoint(Item.ItemType.PICKAXE);
-			Inventory.swapItemsAt(1, 0, pt[0], pt[1]);
-		}
+		// if(shovel && (ControlledInventory.getItemInSlot(0, 0) == null ||
+		// ControlledInventory.getItemInSlot(0, 0).getItemType() !=
+		// ItemType.SHOVEL)) {
+		// pt = ControlledInventory.getFirstOccurrencePoint(ItemType.SHOVEL);
+		// ControlledInventory.swapItemsAt(0, 0, pt[0], pt[1]);
+		// }
+		// if(pick && (ControlledInventory.getItemInSlot(1, 0) == null ||
+		// ControlledInventory.getItemInSlot(1, 0).getItemType() !=
+		// ItemType.PICKAXE)) {
+		// pt = ControlledInventory.getFirstOccurrencePoint(ItemType.PICKAXE);
+		// ControlledInventory.swapItemsAt(1, 0, pt[0], pt[1]);
+		// }
 		int[] nextBlock = getNextBlock();
 		if(nextBlock.length != 3) {
 			MinecraftForm.sendMessageToLocalChatBox("Auto Quary: DONE!");
@@ -74,9 +75,10 @@ public class AutoQuary extends Script {
 		}
 		Location loc;
 		Block next = World.getBlockAt(loc = new Location(startPosition.getX() + nextBlock[1], startPosition.getY() - nextBlock[0], startPosition.getZ() + nextBlock[2]));
-		Item.ItemType bestTool = next.getBestTool();
-		int tool = (bestTool == Item.ItemType.SHOVEL ? 0 : (bestTool == Item.ItemType.PICKAXE ? 1 : 2));
-		Inventory.setActiveItem(tool);
+		// ItemType bestTool = next.getBestTool();
+		// int tool = (bestTool == ItemType.SHOVEL ? 0 : (bestTool ==
+		// ItemType.PICKAXE ? 1 : 2));
+		// ControlledInventory.setActiveItem(tool);
 		if(ControlledPlayer.walkTo(loc)[0].equals("true")) {
 			ControlledPlayer.faceLocation(loc.clone().shift(0.5, 0, 0.5));
 			ControlledPlayer.swingItem(true);
@@ -88,10 +90,9 @@ public class AutoQuary extends Script {
 		return 100;
 	}
 	
-	@Override
 	public void onPaused() {
-		pick = Inventory.contains(ItemType.PICKAXE);
-		shovel = Inventory.contains(ItemType.SHOVEL);
+		// pick = ControlledInventory.contains(ItemType.PICKAXE);
+		// shovel = ControlledInventory.contains(ItemType.SHOVEL);
 	}
 	
 	public int handleCommand(String command) {

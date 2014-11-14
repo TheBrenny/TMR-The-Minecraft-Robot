@@ -4,18 +4,19 @@ import java.io.File;
 import java.io.IOException;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.TMRSettings;
 import net.minecraft.util.ChatComponentText;
 import brennfleck.jarod.tmr.scripts.Script;
 import brennfleck.jarod.tmr.scripts.ScriptList;
 import brennfleck.jarod.tmr.scripts.entities.ControlledPlayer;
 import brennfleck.jarod.tmr.scripts.events.EventObservable;
-import brennfleck.jarod.tmr.scripts.events.TMRListener;
+import brennfleck.jarod.tmr.scripts.events.listeners.TMRListener;
 import brennfleck.jarod.tmr.scripts.examples.AutoQuary;
 import brennfleck.jarod.tmr.scripts.examples.AutoWalker;
+import brennfleck.jarod.tmr.scripts.examples.ListenToThis;
 import brennfleck.jarod.tmr.scripts.examples.MazeRunner;
 import brennfleck.jarod.tmr.scripts.minecraft.MinecraftForm;
-import brennfleck.jarod.tmr.utils.TmrInputProxy;
+import brennfleck.jarod.tmr.util.TMRSettings;
+import brennfleck.jarod.tmr.util.TmrInputProxy;
 
 /**
  * Not a good idea to access this from a script... Just sayin'. None of this
@@ -90,6 +91,7 @@ public class TheMinecraftRobot {
 		ScriptList.addScript(AutoWalker.class);
 		ScriptList.addScript(AutoQuary.class);
 		ScriptList.addScript(MazeRunner.class);
+		ScriptList.addScript(ListenToThis.class);
 		ScriptList.getAllScripts();
 	}
 	

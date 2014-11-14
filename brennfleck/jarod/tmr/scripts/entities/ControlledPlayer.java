@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.util.TmrMovementInputFromOptions;
 import brennfleck.jarod.helpfulthings.BrennyAngle;
 import brennfleck.jarod.helpfulthings.BrennyHelpful;
 import brennfleck.jarod.helpfulthings.BrennyPoint;
@@ -19,6 +18,7 @@ import brennfleck.jarod.tmr.scripts.world.Block;
 import brennfleck.jarod.tmr.scripts.world.Location;
 import brennfleck.jarod.tmr.scripts.world.PreciseLocation;
 import brennfleck.jarod.tmr.scripts.world.World;
+import brennfleck.jarod.tmr.util.TmrMovementInputFromOptions;
 
 public class ControlledPlayer extends EntityPlayerBase {
 	private static ControlledPlayer theActualPlayer;
@@ -44,7 +44,7 @@ public class ControlledPlayer extends EntityPlayerBase {
 	}
 	
 	private static EntityClientPlayerMP getRealPlayer() {
-		return (EntityClientPlayerMP) theActualPlayer.theRealEntity;
+		return (EntityClientPlayerMP) (theActualPlayer.theRealEntity = Minecraft.getMinecraft().thePlayer);
 	}
 	
 	/**
@@ -96,6 +96,22 @@ public class ControlledPlayer extends EntityPlayerBase {
 		}
 		// @formatter:on
 		return new Object[] {dir.name(), dir.getState()};
+	}
+	
+	/**
+	 * Statically calls {@link #getLocation(String)} using the parameter
+	 * <code>"eye"</code>.
+	 */
+	public static Location getLocation() {
+		return getPlayer().getLocation("eye");
+	}
+	
+	/**
+	 * Statically calls {@link #getPreciseLocation(String)} using the parameter
+	 * <code>"eye"</code>.
+	 */
+	public static PreciseLocation getPreciseLocation() {
+		return getPlayer().getPreciseLocation("eye");
 	}
 	
 	/**
@@ -219,6 +235,14 @@ public class ControlledPlayer extends EntityPlayerBase {
 			abovePath.remove(0);
 		}
 		return t;
+	}
+	
+	/**
+	 * Pitches and turns the head to face the
+	 * {@link brennfleck.jarod.tmr.scripts.world.Entity#Entity}'s head.
+	 */
+	public static void faceEntity(Entity e) {
+		faceLocation(e.getPreciseLocation(EYE));
 	}
 	
 	/**

@@ -16,7 +16,7 @@ public class World {
 	private static List<Entity> lastTmrEntityList;
 	private static List lastRealEntityList;
 	
-	private static WorldClient getWorld() {
+	public static WorldClient getRealWorld() {
 		return Minecraft.getMinecraft().theWorld;
 	}
 	
@@ -25,7 +25,7 @@ public class World {
 	 */
 	public static final boolean isValid() {
 		boolean valid = true;
-		if(getWorld() == null) valid = false;
+		if(getRealWorld() == null) valid = false;
 		if(!valid) System.out.println("World is bad!");
 		return valid;
 	}
@@ -43,7 +43,7 @@ public class World {
 	 */
 	public static Block getBlockAt(PreciseLocation l) {
 		Location a = l.getNonPrecise();
-		return new Block(net.minecraft.block.Block.getIdFromBlock(getWorld().getBlock((int) a.x, (int) a.y, (int) a.z)));
+		return new Block(net.minecraft.block.Block.getIdFromBlock(getRealWorld().getBlock((int) a.x, (int) a.y, (int) a.z)));
 	}
 	
 	/**
@@ -102,13 +102,13 @@ public class World {
 	 * block will result in a tool used, but no drop.
 	 */
 	public static void setTemporaryBlock(Location l, Block b) {
-		getWorld().setBlock((int) l.getX(), (int) l.getY(), (int) l.getZ(), net.minecraft.block.Block.getBlockById(b.getID()));
+		getRealWorld().setBlock((int) l.getX(), (int) l.getY(), (int) l.getZ(), net.minecraft.block.Block.getBlockById(b.getID()));
 	}
 	
 	public static List<Entity> getEntities() {
 		List<Entity> ret = new ArrayList<Entity>();
-		if(lastRealEntityList == getWorld().getLoadedEntityList()) return lastTmrEntityList;
-		lastRealEntityList = getWorld().getLoadedEntityList();
+		if(lastRealEntityList == getRealWorld().getLoadedEntityList()) return lastTmrEntityList;
+		lastRealEntityList = getRealWorld().getLoadedEntityList();
 		for(net.minecraft.entity.Entity e : (List<net.minecraft.entity.Entity>) lastRealEntityList) {
 			ret.add(new Entity(e));
 		}
@@ -133,7 +133,7 @@ public class World {
 	public static Entity getNearestEntityInArea(PreciseLocation l, Area a) {
 		Entity n = null;
 		for(Entity e : getEntitiesInArea(a)) {
-			if(n == null || e.getDistanceSqToPreciseLocation(l) < n.getDistanceSqToPreciseLocation(l)) n = e;
+			if(n == null || e.getDistanceSqToPreciseLocation("eye", l) < n.getDistanceSqToPreciseLocation("eye", l)) n = e;
 		}
 		return n;
 	}
