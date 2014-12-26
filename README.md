@@ -1,9 +1,11 @@
-##TMR (The Minecraft Robot)
-####<em>Version 0.7</em>
+#TMR (The Minecraft Robot)
+###<em>Version 0.7</em>
 
 An API for TMR that will run custom scripts written by others!
 
 This is currently being uploaded while bugs are being fixed. Be patient plez.
+
+And also please remember that a lot of this is **Proof Of Concept**.
 
 <hr>
 
